@@ -1,0 +1,14 @@
+#!/usr/bin/env php
+<?php
+
+require_once('/vendor/autoload.php');
+
+use Symfony\Component\Console\Application;
+
+$app = new Application();
+
+// Set default command
+$defaultCommand = new AppBundle\Command\DefaultCommand();
+$app->add($defaultCommand);
+$app->setDefaultCommand($defaultCommand->getName(), true);
+$app->run();
