@@ -8,15 +8,10 @@ class RudeAnalyzer extends Analyzer implements AnalyzerInterface
 {
     public function analyze($input)
     {
-        // @TODO fix file paths
-        if (file_exists(__DIR__.'/../Resources/translations/badwords_en-US.base64.json') === false) {
-            $this->encodeBadWords();
-        }
-        $badwords = $this->decodeBadWords();
+        $badwords = $this->getBadWords();
         foreach ($badwords as $badword) {
-            $realbadword = base64_decode($badword);
-            // @FIXME
-            if (strpos(strtolower($input), $realbadword) !== false) {
+            $evaluate = strpos(strtolower($input), base64_decode($badword));
+            if ($evaluate !== false) {
                 return Marker::M_RUDE;
             }
         }
@@ -34,10 +29,9 @@ class RudeAnalyzer extends Analyzer implements AnalyzerInterface
      *
      * @return array List of bad words.
      */
-    private function decodeBadWords($locale = null)
+    private function getBadWords($locale = null)
     {
         $locale = 'en-US';
-        // @TODO fix file paths
         $badwords = json_decode(
           file_get_contents(__DIR__.'/../Resources/translations/badwords_'.$locale.'.base64.json')
         );
