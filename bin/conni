@@ -7,6 +7,9 @@ use Symfony\Component\Console\Application;
 
 $app = new Application();
 
+// Add commands here. Conni will only run commands of ConniCommand class.
+$app->add(new \AppBundle\Command\ViewCsvCommand());
+
 // Set default command
 $defaultCommand = new AppBundle\Command\DefaultCommand();
 $app->add($defaultCommand);
