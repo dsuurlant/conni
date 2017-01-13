@@ -3,11 +3,13 @@
         "symfony/console": "3.2.*",
         "symfony/filesystem": "^3.2",
         "symfony/finder": "^3.2",
-        "league/csv": "^8.1"
+        "league/csv": "^8.1",
+        "phpunit/phpunit": "^5.7"
     },
     "autoload": {
-        "psr-0": {
-            "": "src/"
+        "psr-4": {
+            "": "src/",
+            "Tests\\": "tests/"
         }
     }
 }

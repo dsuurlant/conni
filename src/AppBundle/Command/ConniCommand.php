@@ -5,6 +5,8 @@ namespace AppBundle\Command;
 
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Extension of Command for Conni-specific functionality.
@@ -12,7 +14,7 @@ use Symfony\Component\Console\Command\Command;
  * Class ConniCommand
  * @package AppBundle\Command
  */
-class ConniCommand extends Command
+abstract class ConniCommand extends Command
 {
 
     /**

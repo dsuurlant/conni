@@ -7,6 +7,7 @@ namespace AppBundle\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
@@ -35,6 +36,7 @@ class ViewCsvCommand extends ConniCommand
             $options[] = $file->getRealPath();
         }
 
+        // @TODO if no CSV files are found.
         $answer = $io->choice(
           "Which CSV file would you like to view, ".$this->getUsername()."?",
           $options
@@ -118,7 +120,7 @@ class ViewCsvCommand extends ConniCommand
         // Viewing CSV file has ended, run specified next command.
         $comm = $this->getApplication()->find($newCommand);
         $comm->setUsername($this->getUsername());
-        $comm->run(new ArrayInput(array()), $output);
+        $comm->run(new StringInput(""), $output);
 
     }
 }
