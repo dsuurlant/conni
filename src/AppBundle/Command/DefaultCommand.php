@@ -69,31 +69,22 @@ class DefaultCommand extends ConniCommand
         }
         $commandOptions[] = "Nothing";
 
-        if (count($commandOptions) > 0) {
-            $choice = $io->choice("What can I do for you today?", $commandOptions);
+        $choice = $io->choice("What can I do for you today?", $commandOptions);
 
-            if ($choice === "Nothing") {
-                $io->text(
-                  array(
-                    "If there is nothing else I can do for you, I'll log you out.",
-                    "I am a very busy virtual intelligence, you know.",
-                    "Have a nice day, ".$this->getUsername().".",
-                  )
-                );
-            } else {
-                // Launch chosen command.
-                $io->text("Your wish is my command, ".$name.".");
-                $chosenCommand = $this->getApplication()->find($choice);
-                $chosenCommand->setUsername($name);
-                $chosenCommand->run(new ArrayInput(array()), $output);
-            }
-        } else {
+        if ($choice === "Nothing") {
             $io->text(
               array(
-                "I currently have no commands available, I'm sorry.",
-                "You should get in touch with my programmers, and ask them if they can improve my usefulness.",
+                "If there is nothing else I can do for you, I'll log you out.",
+                "I am a very busy virtual intelligence, you know.",
+                "Have a nice day, ".$this->getUsername().".",
               )
             );
+        } else {
+            // Launch chosen command.
+            $io->text("Your wish is my command, ".$this->getUsername().".");
+            $chosenCommand = $this->getApplication()->find($choice);
+            $chosenCommand->setUsername($this->getUsername());
+            $chosenCommand->run(new ArrayInput(array()), $output);
         }
     }
 }

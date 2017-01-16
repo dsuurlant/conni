@@ -30,97 +30,116 @@ class ViewCsvCommand extends ConniCommand
 
         // Find CSV files in the application
         $finder = new Finder();
-        $finder->files()->in(__DIR__.'/../../')->name('*.csv');
-        $options = array();
-        foreach ($finder as $file) {
-            $options[] = $file->getRealPath();
-        }
+        $finder->files()->in(__DIR__.'/../../../')->name('*.csv');
 
-        // @TODO if no CSV files are found.
-        $answer = $io->choice(
-          "Which CSV file would you like to view, ".$this->getUsername()."?",
-          $options
-        );
+        if ($finder->count() === 0) {
 
-        $csv = Reader::createFromPath($answer);
-        $headers = $csv->fetchOne();
+            $io->text("There are no CSV files available for viewing.");
+            $answer = $io->confirm("Would you like to return to the previous menu?");
 
-        $limit = 25;
-        $currentPage = 0;
-        $totalRows = count($csv->fetchAll());
-        $totalPages = round($totalRows / $limit);
-        $io->table($headers, $csv->setOffset(1)->setLimit($limit)->fetchAll());
-
-        $nav = array(
-          "First page",
-          "Previous page",
-          "Next page",
-          "Last page",
-          "View another CSV",
-          "Go back to the previous menu",
-        );
-
-        $runningViewer = true;
-        // default to staying with this command.
-        $newCommand = "View CSV";
-        while ($runningViewer) {
-            $navAnswer = $io->choice("What would you like to do next?", $nav);
-
-            switch ($navAnswer) {
-                case $nav[0]:
-                    // First page
-                    $io->table($headers, $csv->setOffset(1)->setLimit($limit)->fetchAll());
-                    break;
-                case $nav[1]:
-                    // Previous page
-                    if ($currentPage === 0) {
-                        $io->text("You're on the first page, ".$this->getUsername().".");
-                        $io->table($headers, $csv->setOffset(1)->setLimit($limit)->fetchAll());
-                    } else {
-                        $nextOffset = (($currentPage * $limit) - $limit) + 1;
-                        $io->table(
-                          $headers,
-                          $csv->setOffset($nextOffset)->setLimit($limit)->fetchAll()
-                        );
-                        $currentPage--;
-                    }
-                    break;
-                case $nav[2]:
-                    // Next page
-                    if ($currentPage == ($totalPages - 1)) {
-                        $io->text("You're on the last page, ".$this->getUsername().".");
-                        $io->table($headers, $csv->setOffset(($totalRows - $limit) + 1)->setLimit($limit)->fetchAll());
-                    } else {
-                        $nextOffset = (($currentPage * $limit) + $limit) + 1;
-                        $io->table(
-                          $headers,
-                          $csv->setOffset($nextOffset)->setLimit($limit)->fetchAll()
-                        );
-                        $currentPage++;
-                    }
-                    break;
-                case $nav[3]:
-                    // Last page
-                    $io->table($headers, $csv->setOffset(($totalRows - $limit) + 1)->setLimit($limit)->fetchAll());
-                    break;
-                case $nav[4]:
-                    // View another CSV, so break out of loop
-                    $runningViewer = false;
-                    break;
-                case $nav[5]:
-                    // Go back to the previous menu
-                    $newCommand = "default";
-                    $runningViewer = false;
-                    break;
-                default:
-                    $runningViewer = false;
+            if ($answer === true) {
+                $default = $this->getApplication()->find('default');
+                $default->setUsername($this->getUsername());
+                $default->run(new StringInput(""), $output);
             }
-        }
 
-        // Viewing CSV file has ended, run specified next command.
-        $comm = $this->getApplication()->find($newCommand);
-        $comm->setUsername($this->getUsername());
-        $comm->run(new StringInput(""), $output);
+        } else {
+
+            $options = array();
+            foreach ($finder as $file) {
+                $options[] = $file->getRealPath();
+            }
+
+            // @TODO if no CSV files are found.
+            $answer = $io->choice(
+              "Which CSV file would you like to view, ".$this->getUsername()."?",
+              $options
+            );
+
+            $csv = Reader::createFromPath($answer);
+            $headers = $csv->fetchOne();
+
+            $limit = 25;
+            $currentPage = 0;
+            $totalRows = count($csv->fetchAll());
+            $totalPages = round($totalRows / $limit);
+            $io->table($headers, $csv->setOffset(1)->setLimit($limit)->fetchAll());
+
+            $nav = array(
+              "First page",
+              "Previous page",
+              "Next page",
+              "Last page",
+              "View another CSV",
+              "Go back to the previous menu",
+            );
+
+            $runningViewer = true;
+            // default to staying with this command.
+            $newCommand = "View CSV";
+            while ($runningViewer) {
+                $navAnswer = $io->choice("What would you like to do next?", $nav);
+
+                switch ($navAnswer) {
+                    case $nav[0]:
+                        // First page
+                        $io->table($headers, $csv->setOffset(1)->setLimit($limit)->fetchAll());
+                        break;
+                    case $nav[1]:
+                        // Previous page
+                        if ($currentPage === 0) {
+                            $io->text("You're on the first page, ".$this->getUsername().".");
+                            $io->table($headers, $csv->setOffset(1)->setLimit($limit)->fetchAll());
+                        } else {
+                            $nextOffset = (($currentPage * $limit) - $limit) + 1;
+                            $io->table(
+                              $headers,
+                              $csv->setOffset($nextOffset)->setLimit($limit)->fetchAll()
+                            );
+                            $currentPage--;
+                        }
+                        break;
+                    case $nav[2]:
+                        // Next page
+                        if ($currentPage == ($totalPages - 1)) {
+                            $io->text("You're on the last page, ".$this->getUsername().".");
+                            $io->table(
+                              $headers,
+                              $csv->setOffset(($totalRows - $limit) + 1)->setLimit($limit)->fetchAll()
+                            );
+                        } else {
+                            $nextOffset = (($currentPage * $limit) + $limit) + 1;
+                            $io->table(
+                              $headers,
+                              $csv->setOffset($nextOffset)->setLimit($limit)->fetchAll()
+                            );
+                            $currentPage++;
+                        }
+                        break;
+                    case $nav[3]:
+                        // Last page
+                        $io->table($headers, $csv->setOffset(($totalRows - $limit) + 1)->setLimit($limit)->fetchAll());
+                        break;
+                    case $nav[4]:
+                        // View another CSV, so break out of loop
+                        $runningViewer = false;
+                        break;
+                    case $nav[5]:
+                        // Go back to the previous menu
+                        $newCommand = "default";
+                        $runningViewer = false;
+                        break;
+                    default:
+                        $runningViewer = false;
+                }
+            }
+
+            // Viewing CSV file has ended, run specified next command.
+            $comm = $this->getApplication()->find($newCommand);
+            $comm->setUsername($this->getUsername());
+            $comm->run(new StringInput(""), $output);
+
+        }
 
     }
 }

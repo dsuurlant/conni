@@ -13,7 +13,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  * Tests whether the default command runs as expected.
  *
  * Class DefaultCommandTest
- * @package AppBundle\Command
+ * @package Tests\AppBundle\Command
  */
 class DefaultCommandTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,9 +22,6 @@ class DefaultCommandTest extends \PHPUnit_Framework_TestCase
 
     /** @var CommandTester */
     protected $tester;
-
-    /** @var Application */
-    private $app;
 
     protected function setUp()
     {
