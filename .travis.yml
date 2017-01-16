@@ -24,7 +24,6 @@ before_install:
   - if [ "$SYMFONY_VERSION" != "" ]; then composer --no-update require symfony/symfony:${SYMFONY_VERSION}; fi;
 
 install:
-  - cp app/config/parameters.yml.dist app/config/parameters.yml
   - composer install
 
 script: phpunit
